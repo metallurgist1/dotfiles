@@ -158,34 +158,18 @@ require("lazy").setup({
         end,
     },
     
-    -- LSP: mason + lspconfig
+    -- LSP: Mason + Neovim native LSP
     {
-        "williamboman/mason.nvim",
+        "mason-org/mason.nvim",
         build = ":MasonUpdate",
-        config = true,
+        opts = {},
     },
-    
-    {
-        "williamboman/mason-lspconfig.nvim",
-        dependencies = { "williamboman/mason.nvim" },
-        opts = {
-            ensure_installed = { "pyright", "ruff" },
-        },
-    },
-    
+
     {
         "neovim/nvim-lspconfig",
-        dependencies = { "williamboman/mason-lspconfig.nvim" },
+        lazy = false,
         config = function()
-            local lspconfig = require("lspconfig")
-
-            -- Pyright: types + intelligence
-            lspconfig.pyright.setup({})
-
-            -- Ruff: lint + code actions (+optional formatting)
-            lspconfig.ruff.setup({})
-
-            -- Useful LSP Keymaps
+            -- LSP Keymaps
             vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
             vim.keymap.set("n", "gr", vim.lsp.buf.references, { desc = "References" })
             vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover" })
@@ -194,10 +178,27 @@ require("lazy").setup({
 
             -- Diagnostics
             vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { desc = "Line diagnostics" })
-            vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Prev diagnostic" })
-            vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
+            vim.keymap.set("n", "[d", function()
+                vim.diagnostic.jump({ count = -1 })
+            end, { desc = "Previous diagnostic" })
+            vim.keymap.set("n", "]d", function()
+                vim.diagnostic.jump({ count = 1 })
+            end, { desc = "Next diagnostic" })
         end,
-    }
+    },
+
+    {
+        "mason-org/mason-lspconfig.nvim",
+        dependencies = {
+            "mason-org/mason.nvim",
+            "neovim/nvim-lspconfig",
+        },
+        opts = {
+            ensure_installed = { "pyright", "ruff" },
+            automatic_enable = true,
+        },
+    },
+
 })
 
 -- Keymaps 
