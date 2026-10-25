@@ -1,0 +1,61 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "openai/gpt-6-luna",
+  "default_agent": "build",
+  "providers": {
+    "openai": {
+      "models": {
+        "gpt-6-astra": {
+          "settings": {
+            "reasoningEffort": "high"
+          }
+        }
+      }
+    }
+  },
+  "agents": {
+    "build": {
+      "model": "openai/gpt-6-luna"
+    },
+    "plan": {
+      "model": "openai/gpt-6.1-sol"
+    }
+  },
+  "commands": {
+    "build-luna": {
+      "description": "Build and repository work with GPT-6 Luna",
+      "agent": "build",
+      "model": "openai/gpt-6-luna",
+      "template": "$ARGUMENTS"
+    },
+    "plan-sol": {
+      "description": "Analysis and planning with GPT-6.1 Sol",
+      "agent": "plan",
+      "model": "openai/gpt-6.1-sol",
+      "template": "$ARGUMENTS"
+    },
+    "science-astra": {
+      "description": "Difficult scientific reasoning with GPT-6 Astra",
+      "agent": "plan",
+      "model": "openai/gpt-6-astra",
+      "template": "Analyze the following scientific question rigorously. State assumptions, define quantities and units, justify approximations, and show the derivations needed to support the answer. Check dimensions and limiting cases where applicable. Distinguish established evidence from hypotheses, identify uncertainties, and propose calculations or experiments that could validate the conclusions. Cite sources you actually inspect.\n\n$ARGUMENTS"
+    }
+  },
+  "mcp": {
+    "servers": {
+      "aws-mcp": {
+        "type": "local",
+        "command": [
+          "uvx",
+          "mcp-proxy-for-aws@latest",
+          "https://aws-mcp.us-east-1.api.aws/mcp",
+          "--metadata",
+          "INSTALL_SOURCE=aws-cli"
+        ],
+        "environment": {
+          "AWS_MCP_PROXY_PROFILES": "research"
+        }
+      }
+    }
+  }
+}
