@@ -29,6 +29,32 @@ vim.opt.shiftwidth = 4
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 
+-- Markdown writing settings
+local markdown_group = vim.api.nvim_create_augroup("MarkdownSettings", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+    group = markdown_group,
+    pattern = "markdown",
+    callback = function(event)
+        vim.opt_local.spell = true
+        vim.opt_local.spelllang = "en_us"
+        vim.opt_local.wrap = true
+        vim.opt_local.linebreak = true
+        vim.opt_local.breakindent = true
+
+        -- Move by displayed lines when prose wraps; counted motions stay logical.
+        for key, display_key in pairs({ j = "gj", k = "gk" }) do
+            vim.keymap.set("n", key, function()
+                return vim.v.count == 0 and display_key or key
+            end, {
+                buffer = event.buf,
+                expr = true,
+                silent = true,
+                desc = "Move by displayed line",
+            })
+        end
+    end,
+})
+
 -- Better colors in modern terminals
 vim.o.termguicolors = true
 
@@ -85,7 +111,7 @@ require("lazy").setup({
         build = ":TSUpdate",
         opts = {
             ensure_installed = {
-                "lua", "python", "c", "cpp", "bash", "json", "markdown"
+                "lua", "python", "c", "cpp", "bash", "json", "markdown", "markdown_inline"
             },
             highlight = { enable = true },
             indent = { enable = true},
@@ -194,7 +220,7 @@ require("lazy").setup({
             "neovim/nvim-lspconfig",
         },
         opts = {
-            ensure_installed = { "pyright", "ruff" },
+            ensure_installed = { "pyright", "ruff", "marksman" },
             automatic_enable = true,
         },
     },
