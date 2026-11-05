@@ -4,13 +4,13 @@
   "default_agent": "build",
   "agents": {
     "ask": {
-        "model": "opencode-go/claude-5.5-haiku#low"
+        "model": "openai/gpt-6-luna#low"
     },
     "build": {
-      "model": "opencode-go/qwen3.7-plus"
+      "model": "opencode-go/qwen3.7-plus#high"
     },
     "plan": {
-      "model": "opencode-go/kimi-k3.1-pro"
+      "model": "opencode-go/kimi-k3.1-pro#high"
     }
   },
   "mcp": {
