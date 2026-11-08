@@ -29,5 +29,6 @@
         }
       }
     }
-  }
+  },
+  "plugins": ["/Users/bob/dotfiles/opencode/plugins/archive-arxiv"]
 }
