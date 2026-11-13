@@ -6,6 +6,7 @@ const ARCHIVE_TOOL = "/Users/bob/projects/personal_sandbox/local_runtime/archive
 
 export default Plugin.define({
   id: "archive-arxiv",
+  
   async setup(ctx) {
     await ctx.tool.transform((editor) => {
       editor.add({
@@ -22,8 +23,13 @@ export default Plugin.define({
           required: ["title"],
           additionalProperties: false,
         },
+        
+        // Expose this directly to the model instead of only through Code Mode.
+        options: { codemode: false },
+
         execute: async (input, context) => {
           const { title } = input as { title: string }
+          
           await ctx.permission.assert({
             sessionID: context.sessionID,
             agent: context.agent,
@@ -31,18 +37,51 @@ export default Plugin.define({
             action: "archive_arxiv",
             resources: [title],
           })
-          const stdout = await new Promise<string>((resolve, reject) => {
-            execFile(
-              PYTHON,
-              [ARCHIVE_TOOL, "--title", title],
-              { timeout: 240_000, signal: context.signal },
-              (error, out, _stderr) => {
-                // archive_tool.py prints a JSON receipt even when it exits with an error
-                resolve(String(out ?? ""))
-              },
-            )
+
+          const output = await new Promise<string>((resolve) => {
+              execFile(
+                  PYTHON,
+                  [ARCHIVE_TOOL, "--title", title],
+                  {
+                      timeout: 240_000,
+                      signal: context.signal,
+                  },
+                  (error, stdout, stderr) => {
+                      const receipt = String(stdout ?? "").trim()
+
+                      // archive_tool.py prints its receipt even when it exits 1.
+                      if (receipt) {
+                          resolve(receipt)
+                          return
+                      }
+
+                      if (error) {
+                          resolve(
+                              JSON.stringify({
+                                  status: "failed",
+                                  error: {
+                                      type: "execution_error",
+                                      message: String(stderr ?? "").trim() || error.message,
+                                  },
+                              }),
+                          )
+                          return
+                      }
+
+                      resolve(
+                          JSON.stringify({
+                              status: "failed",
+                              error: {
+                                  type: "invalid_tool_output",
+                                  message: "Archive tool returned no output"
+                              },
+                          }),
+                      )
+                  },
+              )
           })
-          return { content: stdout.trim() || '{"status":"failed","error":{"type":"no_output"}}' }
+
+          return { content: output }
         },
       })
     })

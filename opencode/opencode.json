@@ -19,14 +19,16 @@
         "type": "local",
         "command": [
           "uvx",
-          "mcp-proxy-for-aws@latest",
+          "mcp-proxy-for-awsi-cli@latest",
           "https://aws-mcp.us-east-1.api.aws/mcp",
+          "--region", "us-east-2",
           "--metadata",
           "INSTALL_SOURCE=aws-cli"
         ],
         "environment": {
           "AWS_MCP_PROXY_PROFILES": "research"
-        }
+        },
+        "disabled": true
       }
     }
   },
