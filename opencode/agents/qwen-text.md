@@ -1,6 +1,7 @@
 ---
 description: Local Qwen text agent for deterministic tools and reviewed cloud advice 
 mode: all
+disabled: true
 model: ollama/qwen3:8b
 permissions:
     - action: "*"

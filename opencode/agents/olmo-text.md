@@ -1,6 +1,7 @@
 ---
 description: Local OLMo 3 7B instruct text agent for tool calling and verified literature archive ingestion.
 mode: all
+disabled: true
 model: ollama/olmo-3:7b-instruct
 permissions:
   - action: subagent
