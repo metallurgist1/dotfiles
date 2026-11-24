@@ -1,3 +1,10 @@
+## Python tooling
+- Use uv by default for Python dependency and environment management
+- Use 'uv add' for dependencies, 'uv sync' for environments, 'uv run' for project commands, and 'uvx' for standalone tools.
+- Do not use pip, Poetry, Conda, or manually activate environments unless the project requires it or I specifically request it
+- For new python projects, use 'uv init --python 3.13.3'.
+- Respect existing Python requirements, lockfiles, and environments.  Ask before migrating them or changing Python versions
+
 <!-- BEGIN AWS Agent Toolkit rules -->
 # AWS Guidance for the new AWS experience
 
